@@ -6,12 +6,16 @@ on:
   pull_request:
     branches: [ "master" ]
   schedule:
-    - cron: '0 3 * * *'     # Daily at 2 AM UTC
-    - cron: '0 3 * * 6'  # Monday and Thursday at 2 PM UTC
+    #- cron: '0 3 * * *'     # Daily at 2 AM UTC
+    #- cron: '0 3 * * 6'  # Monday and Thursday at 2 PM UTC
 jobs:
   build:
 
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      issues: write
 
     steps:
     - uses: actions/checkout@v4
@@ -24,7 +28,9 @@ jobs:
         
     - name: Execute Tests
       run: mvn clean test -DsuiteXmlFile=suite -X
+
     - name: Upload a Build Artifact
+      if: always()
       uses: actions/upload-artifact@v4.5.0
       with:
         name: Logs
